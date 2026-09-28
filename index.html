@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7c3aed">
+<meta name="description" content="Magburugto Print and Inks business manager">
+<link rel="manifest" href="manifest.json">
+<title>Magburugto Print and Inks</title>
+<style>
+:root{--p:#7c3aed;--p2:#a855f7;--bg:#f7f5fb;--card:#fff;--text:#281f32;--muted:#756d80;--line:#e8e1ef;--green:#16a05d;--red:#dc4444;--amber:#d88900}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif;padding-bottom:75px}
+header{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:calc(20px + env(safe-area-inset-top)) 17px 22px;position:relative}
+header h1{margin:0;font-size:20px}header p{margin:5px 0 0;font-size:12px;opacity:.9}
+#install{position:absolute;right:15px;bottom:15px;border:0;background:#fff;color:var(--p);font-weight:800;border-radius:20px;padding:8px 11px}
+main{max-width:1000px;margin:auto;padding:14px}.page{display:none}.page.active{display:block}
+h2{font-size:19px;margin:4px 0 12px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.card{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 3px 14px #33204d10}.stat small{font-size:11px;color:var(--muted)}.stat strong{display:block;font-size:20px;margin-top:6px}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:10;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:7px 4px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -4px 14px #33204d12}
+nav button{border:0;background:transparent;color:#756d80;font-size:10px;font-weight:700;padding:6px 2px}.navicon{display:block;font-size:19px;margin-bottom:2px}.navactive{color:var(--p)!important}
+label{display:block;font-size:12px;font-weight:700;margin:8px 0 4px}input,select{width:100%;padding:12px;border:1px solid #ded5e7;border-radius:11px;background:#fff;font-size:15px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:9px}.btn{border:0;border-radius:11px;padding:11px 13px;background:var(--p);color:#fff;font-weight:800;margin-top:9px}.btn.gray{background:#eee8f5;color:#51465b}.btn.green{background:#dcfce7;color:#166534}.btn.red{background:#fee2e2;color:#991b1b}.btn.full{width:100%}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 4px;border-bottom:1px solid #eee;text-align:left;vertical-align:top}th{color:var(--muted)}
+.badge{padding:4px 7px;border-radius:15px;font-size:10px;font-weight:800;background:#ede9fe;color:#5b21b6}.paid{background:#dcfce7;color:#166534}.pending{background:#fef3c7;color:#92400e}
+.empty{text-align:center;color:var(--muted);padding:20px}.total{font-size:20px;font-weight:900;margin-top:10px}.muted{font-size:11px;color:var(--muted)}
+#toast{position:fixed;left:50%;bottom:85px;transform:translateX(-50%);background:#29232f;color:#fff;padding:10px 14px;border-radius:12px;display:none;z-index:20;font-size:13px}
+@media(min-width:700px){main{padding:20px}.grid{grid-template-columns:repeat(4,1fr)}nav{left:50%;right:auto;width:680px;transform:translateX(-50%);border-radius:18px 18px 0 0}.card{padding:18px}}
+@media(max-width:450px){.row{grid-template-columns:1fr}table{font-size:11px}}
+</style>
+</head>
+<body>
+<header><h1>🖨️ Magburugto Print and Inks</h1><p>Business Manager • Android V3</p><button id="install" style="display:none">📲 Install</button></header>
+<main>
+<section id="home" class="page active">
+<h2>Good day! 👋</h2>
+<div class="grid">
+<div class="card stat"><small>Today's Sales</small><strong id="ts">₱0.00</strong></div>
+<div class="card stat"><small>Today's Expenses</small><strong id="te">₱0.00</strong></div>
+<div class="card stat"><small>Today's Net</small><strong id="tn">₱0.00</strong></div>
+<div class="card stat"><small>Pending Orders</small><strong id="po">0</strong></div>
+</div>
+<div class="card"><b>⚠️ Low Stock</b><div id="low" style="margin-top:10px"></div></div>
+<div class="card"><b>🧾 Recent Orders</b><div id="recent" style="margin-top:10px"></div></div>
+</section>
+
+<section id="orders" class="page">
+<h2>🧾 New Order</h2>
+<div class="card">
+<label>Customer</label><input id="cust" placeholder="Walk-in customer">
+<div class="row"><div><label>Service</label><select id="service"><option>Black & White Print</option><option>Colored Print - Text + Image</option><option>Full Colored Print</option><option>Photocopy / Xerox</option><option>Photo Print - 2x2</option><option>Photo Print - 1x1</option><option>Photo Print - Passport</option><option>Lamination</option><option>Scan</option><option>Rush ID</option><option>Other</option></select></div><div><label>Quantity</label><input id="qty" type="number" min="1" value="1"></div></div>
+<div class="row"><div><label>Unit Price ₱</label><input id="price" type="number" min="0" step=".01" value="5"></div><div><label>Status</label><select id="status"><option>Paid</option><option>Pending</option></select></div></div>
+<label>Note</label><input id="note" placeholder="Paper size, special request...">
+<div class="total">Total: <span id="ot">₱5.00</span></div>
+<button class="btn full" onclick="addOrder()">＋ Save Order</button>
+</div>
+<div class="card"><b>Order History</b><div id="olist" style="margin-top:10px"></div></div>
+</section>
+
+<section id="finance" class="page">
+<h2>💰 Finance</h2>
+<div class="card"><b>Add Expense</b>
+<label>Description</label><input id="ename" placeholder="Ink / paper / electricity">
+<label>Amount ₱</label><input id="eamt" type="number" min="0" step=".01">
+<button class="btn full" onclick="addExpense()">＋ Save Expense</button></div>
+<div class="card"><b>Expense History</b><div id="elist" style="margin-top:10px"></div></div>
+</section>
+
+<section id="stock" class="page">
+<h2>📦 Inventory</h2>
+<div class="card"><label>Item</label><input id="iname" placeholder="A4 Bond Paper">
+<div class="row"><div><label>Quantity</label><input id="iqty" type="number" min="0" step=".01"></div><div><label>Unit</label><input id="iunit" placeholder="ream / pc / bottle"></div></div>
+<div class="row"><div><label>Cost per Unit ₱</label><input id="icost" type="number" min="0" step=".01"></div><div><label>Alert Below</label><input id="ialert" type="number" min="0" value="5"></div></div>
+<button class="btn full" onclick="addInv()">＋ Add / Update Item</button></div>
+<div class="card"><div id="ilist"></div></div>
+</section>
+
+<section id="more" class="page">
+<h2>⚙️ More</h2>
+<div class="card"><b>🧮 Cost Calculator</b>
+<label>Paper / Material ₱</label><input id="cp" type="number" value="2" step=".01"><label>Ink ₱</label><input id="ci" type="number" value="1" step=".01"><label>Electricity + Machine ₱</label><input id="cm" type="number" value=".5" step=".01"><label>Wastage / Misc ₱</label><input id="cw" type="number" value=".5" step=".01"><label>Labor ₱</label><input id="cl" type="number" value="1" step=".01"><label>Markup %</label><input id="mk" type="number" value="50" step=".1"><button class="btn full" onclick="calc()">Calculate</button><div class="total" id="cr"></div></div>
+<div class="card"><b>📈 Reports</b><div class="row"><div><label>From</label><input id="rf" type="date"></div><div><label>To</label><input id="rt" type="date"></div></div><button class="btn full" onclick="report()">Generate Report</button><button class="btn gray full" onclick="window.print()">🖨️ Print</button><div id="rep" style="margin-top:12px"></div></div>
+<div class="card"><b>💾 Data</b><p class="muted">Your data is stored locally on this device/browser.</p><button class="btn gray" onclick="exportData()">⬇️ Backup Data</button><button class="btn red" onclick="resetData()">Reset All Data</button></div>
+</section>
+</main>
+<nav>
+<button class="navactive" onclick="go('home',this)"><span class="navicon">🏠</span>Home</button>
+<button onclick="go('orders',this)"><span class="navicon">🧾</span>Orders</button>
+<button onclick="go('finance',this)"><span class="navicon">💰</span>Finance</button>
+<button onclick="go('stock',this)"><span class="navicon">📦</span>Stock</button>
+<button onclick="go('more',this)"><span class="navicon">⚙️</span>More</button>
+</nav><div id="toast"></div>
+<script>
+const KEY='magburugto_v3';let db=JSON.parse(localStorage.getItem(KEY)||'{"orders":[],"expenses":[],"inventory":[]}');
+const $=x=>document.getElementById(x),peso=n=>'₱'+(+n||0).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
+function save(){localStorage.setItem(KEY,JSON.stringify(db));render()}function today(){return new Date().toISOString().slice(0,10)}function key(d){return new Date(d).toISOString().slice(0,10)}
+function toast(s){let t=$('toast');t.textContent=s;t.style.display='block';setTimeout(()=>t.style.display='none',1800)}
+function go(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('nav button').forEach(x=>x.classList.remove('navactive'));b.classList.add('navactive')}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function addOrder(){let q=+$('qty').value||1,p=+$('price').value||0;db.orders.unshift({id:Date.now(),date:new Date().toISOString(),customer:$('cust').value.trim()||'Walk-in',service:$('service').value,qty:q,price:p,total:q*p,status:$('status').value,note:$('note').value.trim()});$('cust').value='';$('note').value='';save();toast('Order saved ✓')}
+function addExpense(){let n=$('ename').value.trim(),a=+$('eamt').value||0;if(!n||a<=0)return toast('Enter expense and amount');db.expenses.unshift({id:Date.now(),date:new Date().toISOString(),name:n,amount:a});$('ename').value='';$('eamt').value='';save();toast('Expense saved ✓')}
+function addInv(){let n=$('iname').value.trim();if(!n)return toast('Enter item name');let o={id:Date.now(),name:n,qty:+$('iqty').value||0,unit:$('iunit').value.trim(),cost:+$('icost').value||0,alert:+$('ialert').value||0},old=db.inventory.find(x=>x.name.toLowerCase()===n.toLowerCase());old?Object.assign(old,o):db.inventory.push(o);save();toast('Inventory saved ✓')}
+function del(t,id){if(confirm('Delete this record?')){db[t]=db[t].filter(x=>x.id!==id);save()}}
+function toggle(id){let o=db.orders.find(x=>x.id===id);if(o){o.status=o.status==='Paid'?'Pending':'Paid';save()}}
+$('qty').oninput=$('price').oninput=()=>{$('ot').textContent=peso((+$('qty').value||0)*(+$('price').value||0))}
+function render(){
+ let d=today(),s=db.orders.filter(x=>key(x.date)===d).reduce((a,x)=>a+x.total,0),e=db.expenses.filter(x=>key(x.date)===d).reduce((a,x)=>a+x.amount,0);
+ $('ts').textContent=peso(s);$('te').textContent=peso(e);$('tn').textContent=peso(s-e);$('po').textContent=db.orders.filter(x=>x.status==='Pending').length;
+ let low=db.inventory.filter(x=>x.qty<=x.alert);$('low').innerHTML=low.length?low.map(x=>`⚠️ ${esc(x.name)} — <b>${x.qty} ${esc(x.unit)}</b>`).join('<br>'):'<span class="muted">All stock levels are okay.</span>';
+ let ro=db.orders.slice(0,5);$('recent').innerHTML=ro.length?'<table><tr><th>Customer</th><th>Service</th><th>Total</th></tr>'+ro.map(x=>`<tr><td>${esc(x.customer)}</td><td>${esc(x.service)}</td><td>${peso(x.total)}</td></tr>`).join('')+'</table>':'<div class="empty">No orders yet.</div>';
+ $('olist').innerHTML=db.orders.length?'<table><tr><th>Customer/Service</th><th>Total</th><th>Status</th><th></th></tr>'+db.orders.map(x=>`<tr><td><b>${esc(x.customer)}</b><br>${esc(x.service)}<br><span class="muted">${esc(x.note)}</span></td><td>${peso(x.total)}</td><td><span class="badge ${x.status==='Paid'?'paid':'pending'}">${x.status}</span></td><td><button class="btn green" onclick="toggle(${x.id})">✓</button><button class="btn red" onclick="del('orders',${x.id})">×</button></td></tr>`).join('')+'</table>':'<div class="empty">No orders yet.</div>';
+ $('elist').innerHTML=db.expenses.length?'<table><tr><th>Description</th><th>Amount</th><th></th></tr>'+db.expenses.map(x=>`<tr><td>${esc(x.name)}<br><span class="muted">${new Date(x.date).toLocaleDateString()}</span></td><td>${peso(x.amount)}</td><td><button class="btn red" onclick="del('expenses',${x.id})">×</button></td></tr>`).join('')+'</table>':'<div class="empty">No expenses yet.</div>';
+ $('ilist').innerHTML=db.inventory.length?'<table><tr><th>Item</th><th>Qty</th><th>Cost</th><th></th></tr>'+db.inventory.map(x=>`<tr><td>${esc(x.name)}<br><span class="muted">${esc(x.unit)}</span></td><td>${x.qty} ${x.qty<=x.alert?'⚠️':''}</td><td>${peso(x.cost)}</td><td><button class="btn red" onclick="del('inventory',${x.id})">×</button></td></tr>`).join('')+'</table>':'<div class="empty">No inventory yet.</div>';
+}
+function calc(){let c=['cp','ci','cm','cw','cl'].reduce((a,id)=>a+(+$(id).value||0),0);c=+c||0;let m=(+$('mk').value||0)/100;$('cr').innerHTML='Estimated Cost: '+peso(c)+'<br>Suggested Price: '+peso(c*(1+m))}
+function report(){let f=$('rf').value,t=$('rt').value;if(!f||!t)return toast('Choose report dates');let o=db.orders.filter(x=>key(x.date)>=f&&key(x.date)<=t),e=db.expenses.filter(x=>key(x.date)>=f&&key(x.date)<=t),s=o.reduce((a,x)=>a+x.total,0),ex=e.reduce((a,x)=>a+x.amount,0);$('rep').innerHTML=`<div class="card"><b>${f} → ${t}</b><p>Orders: <b>${o.length}</b></p><p>Sales: <b>${peso(s)}</b></p><p>Expenses: <b>${peso(ex)}</b></p><p>Net Income: <b>${peso(s-ex)}</b></p></div>`}
+function exportData(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='magburugto-backup.json';a.click();URL.revokeObjectURL(a.href)}
+function resetData(){if(confirm('Delete ALL app data?')){db={orders:[],expenses:[],inventory:[]};save();toast('Data reset')}}
+render();$('cr').textContent='Tap Calculate';
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
+let deferred;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;$('install').style.display='block'});$('install').onclick=async()=>{if(deferred){deferred.prompt();deferred=null;$('install').style.display='none'}};
+</script>
+</body></html>
